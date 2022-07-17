@@ -11,7 +11,7 @@ function Run(client, msg)
     const originalMsg = msg.content.replace(msgParams[0], "").replace(msgParams[1], "").replace(msgParams[2], "");
 
     client.channels.fetch(channel_id).then(channel => {
-        if (channel.type != "text") 
+        if (channel.type != "GUILD_TEXT") 
             return BotFunctions.SimpleMessage(msg.channel, "The passed channel must be a text channel that you can post messages in.", "Incorrect channel type!", Colors["error"]);
 
         if (originalMsg.replace(" ", "").length <= 1)

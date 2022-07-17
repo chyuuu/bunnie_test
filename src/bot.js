@@ -12,8 +12,9 @@ const PreviewCommand = require("./commands/preview.js");
 const PreviewFancyCommand = require("./commands/previewfancy.js");
 const ListCommand = require("./commands/list.js");
 
-const { Client, MessageEmbed } = require("discord.js");
-const client = new Client();
+const { Client, MessageEmbed, Intents } = require("discord.js");
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES,
+	Intents.FLAGS.GUILD_WEBHOOKS] });
 
 const {Stickies} = require("./sticky.js");
 global.stickies = new Stickies();
@@ -23,26 +24,27 @@ client.once('ready', async function() {
 	client.user.setActivity('boing boing');
 });
 
-client.on('message', async function(message) {
-	if (message.author.bot || message.member.roles.cache.has('740605609853976576')) {
-		return;
+client.on('messageCreate', async function(message) {
+	if (message.author.bot || message.member.roles.cache.has('748874101405253724')) {
+		return; 
+        // if bot or modmin team (but will ignore admin roles), ignore message and don't respond (so not responding to isabelle bot 699208296888008792) but i want it to response to isabella so.. "else if"?
 	}
 
-  const arr = ['@Moving Out', ';villager', '; villager'];
-	const msgVill = ', the `;villager` command will not work unless it\'s in a separate message. Please try again! ';
+  const arr = ['@Moving Out', '$villager', '$ villager'];
+	const msgVill = ', the `$villager` command will not work unless it\'s in a separate message. Please try again! ';
 
 	for (let i = 0; i < arr.length; i++) {
 
-		if (message.content.startsWith(';villager')) {
+		if (message.content.startsWith('$villager')) {
 			return;
 		}
-		else if (message.content.startsWith('; villager')) {
+		else if (message.content.startsWith('$ villager')) {
 			return;
 		}
-		else if (message.content.startsWith('; Villager')) {
+		else if (message.content.startsWith('$ Villager')) {
 			return;
 		}
-		else if (message.content.startsWith(';Villager')) {
+		else if (message.content.startsWith('$Villager')) {
 			return;
 		}
 		else if (message.content.toLowerCase().includes(arr[i])) {
@@ -61,15 +63,16 @@ client.on('message', async function(message) {
 		// deletes the message
 		message.delete();
 
-		// the channel reply
-		message.reply('your message contained a long list. You have been DM\'d instructions with how to repost properly or you can quick fix by reformatting with just commas instead of line breaks. Thanks!');
+		// the channel reply > removing this to stop embarassing people publicly 
+		//message.reply('your message contained a long list. You have been DM\'d instructions with how to repost properly or you can quick fix by reformatting with just commas instead of line breaks. Thanks!');
 
 		// DMs the user
-		message.author.send('Your message contains a long list so it has been deleted. Here is a copy of the message you sent:\n' + ('```') + (message.content) + ('```') + ('\n**Please try to use pastebin, a database (nook.exchange, villagerdb), or google doc to make your list less invasive in the chat. These methods will provide you with a link to share. \n\nPlease re-post with a reformatted/shorter list/post (use commas instead of line breaks) or upload a SINGLE screenshot image of your list in a table format (don\'t take a screenshot of a long list too, it will still result in a long image).**\n\nMods have been notified so please do not try to copy and paste it again to bypass. This is a rule and trying to bypass in any way will result in an infraction. Thank you!'));
+		message.author.send('Your message contains a long list so it has been deleted. Here is a copy of the message you sent:\n' + ('```') + (message.content) + ('```') + ('\n**Please try to use pastebin, a database (nook.exchange, villagerdb), or google doc to make your list less invasive in the chat. These methods will provide you with a link to share. \n\nPlease re-post with a reformatted/shorter list/post (use commas instead of line breaks) or upload a SINGLE screenshot image of your list in a table format (don\'t take a screenshot of a long list too, it will still result in a long image).**\n\nMods have been notified so please do not try to copy and paste it again to bypass. This is a rule and trying to bypass in any way will result in an infraction (net thwacks, as we call them in NoFee). Thank you!'));
 	}
 });
 
-client.fetchApplication().then(app => global.discordApplication = app);
+// client.fetchApplication().then(app => global.discordApplication = app);
+console.log(global.discordApplication);
 client.on("ready", () => {
     global.stickies.LoadStickies(client.guilds, () => {
         // Delete all Sticky bot messages in the last 50 messages for every server's channels
@@ -84,7 +87,7 @@ client.on("ready", () => {
                         channel.messages.fetch({limit: 50}).then(messages => {
                             for (const [_, message] of messages)
                             {
-                                if (message.author.bot && message.author.id == global.discordApplication.id)
+                                if (message.author.bot && message.author.id == global.discordApplication)
                                 {
                                     //// Only remove sticky messages (So commands stay visible)
                                     //if (message.embeds[0] == null)
@@ -128,7 +131,7 @@ client.on("message", msg => {
 
     if (msgParams[0] == "!sticky")
     {
-        if (!msg.member.hasPermission("MANAGE_CHANNELS"))
+        if (!msg.member.permissions.has("MANAGE_CHANNELS"))
         {
             BotFunctions.SimpleMessage(msg.channel, "You need the 'Manage Channels' permission.", "Insufficient Privileges!", Colors["error"]);
             return;
@@ -175,7 +178,7 @@ client.on("message", msg => {
                 embed.addField("!sticky list <channel id>", "List stickies in a channel");
                 embed.addField("!sticky list", "List all channels with stickies");
 
-                msg.channel.send(embed);
+                msg.channel.send({ embeds: [embed]} );
         }
     }
     else

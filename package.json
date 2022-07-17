@@ -4,11 +4,10 @@
   "description": "A work in progress bot that keeps important stuff at the bottom of channels",
   "main": "index.js",
   "dependencies": {
-    "discord.js": "^12.5.1",
+    "discord.js": "^13.8.1",
     "dotenv": "^8.2.0",
     "sqlite3": "^5.0.0"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon ./src/bot.js"

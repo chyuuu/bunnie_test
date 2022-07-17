@@ -11,7 +11,7 @@ function Run(client, msg)
     const channel_id = BotFunctions.GetMessageChannelID(msgParams[2]);
 
     client.channels.fetch(channel_id).then(channel => {
-        if (channel.type != "text") 
+        if (channel.type != "GUILD_TEXT") 
             return BotFunctions.SimpleMessage(msg.channel, "The passed channel must be a text channel that you can post messages in.", "Incorrect channel type!", Colors["error"]);
         
         FancyFunctions.GetMessagePropertiesFromUser(msg, (hex_color, title, message) => {

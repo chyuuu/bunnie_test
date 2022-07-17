@@ -23,7 +23,7 @@ function Run(client, msg)
 
         const listEmbed = new MessageEmbed();
         listEmbed.color = Colors["info"];
-        listEmbed.title = global.discordApplication.name;
+        listEmbed.title = global.discordApplication;
 
         if (stickyList != null && stickyList != false)
         {
@@ -48,7 +48,7 @@ function Run(client, msg)
                         if (listEmbed.fields.length <= 0)
                             BotFunctions.SimpleMessage(msg.channel, Errors["no_stickies"], "Error listing stickies", Colors["error"]);
                         else
-                            msg.channel.send(listEmbed);
+                            msg.channel.send({ embeds: [listEmbed]} );
                     }
                         
                 }).catch(_ => {
